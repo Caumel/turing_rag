@@ -26,6 +26,7 @@ class SummarizingChatMessageHistory(BaseChatMessageHistory):
         if token_count > self.token_limit:
             context = "\n".join([m.content for m in self.messages[-8:] if hasattr(m, 'content')])
             summary = self.llm.invoke(f"Resume esto brevemente:\n{context}")
+            print(f"Resumen generado: {summary.content}")
             self.messages = [SystemMessage(content=f"Resumen: {summary.content}")]
 
     def get_messages(self) -> list[BaseMessage]:

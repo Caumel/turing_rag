@@ -2,6 +2,7 @@ from typing import Dict
 from gradio import ChatInterface, Chatbot, themes, MultimodalTextbox
 from langchain_community.document_loaders import PyMuPDFLoader
 import os
+import shutil
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -10,28 +11,28 @@ from rag_agent import RAGAgent
 
 rag_agent = RAGAgent()
 
-async def process_message(message: Dict, history):
+def process_message(message: Dict, history):
     try:
         if message["text"] and message['text'] != "":
             response = ""
             last_step = 0
-            async for msg in rag_agent.process_message(message['text']):
+            for msg in rag_agent.process_message(message['text']):
                 if last_step < msg["last_step"]:
                     last_step = msg["last_step"]
                     response = ""
                     yield response
                 response += str(msg["response"])
-                # print("last step {}".format(msg["last_step"]))
-                print(msg["source_documents"])
                 yield response
         if message['files'] and len(message['files']) > 0:
                 try:
                     for file in message['files']:
-                        docs = PyMuPDFLoader(file).load()
-                        os.remove(file)
-                    
+                        filename = os.path.basename(file)
+                        new_path = os.path.join("docs", filename)
+                        shutil.move(file, new_path)
+                        docs = PyMuPDFLoader(new_path).load()
                     yield "Archivos almacenados, ¿en qué puedo ayudarte?"
                 except Exception as e:
+                    print(e)
                     yield "Error almacenando archivos"
     except Exception as e:
         print(e)

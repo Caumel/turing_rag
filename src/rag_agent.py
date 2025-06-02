@@ -19,7 +19,8 @@ class RAGAgent:
         self.llm = ChatOpenAI(
             openai_api_key=os.getenv("OPENAI_API_KEY"),
             model_name="gpt-3.5-turbo",
-            temperature=0
+            temperature=0,
+            streaming=True
         )
         self.embeddings = OpenAIEmbeddings()
         self.vectorstore = self.create_vectorstore_from_pdfs(pdf_folder)
@@ -33,22 +34,18 @@ class RAGAgent:
             return_source_documents=True
         )
 
-        # Adaptador que renombra "answer" a "output"
         chain = (
             RunnableLambda(lambda x: base_chain.invoke(x))
             | RunnableLambda(lambda result: {
                 "output": result["answer"],
-                "source_documents": result.get("source_documents", [])
             })
         )
 
-        # Función para recuperar historial de la sesión
         def get_history(session_id: str):
             if session_id not in self.histories:
                 self.histories[session_id] = SummarizingChatMessageHistory(llm=self.llm, token_limit=1000)
             return self.histories[session_id]
         
-        # Nuevo chain con historial
         self.chain = RunnableWithMessageHistory(
             chain,
             get_session_history=get_history,
@@ -87,16 +84,26 @@ class RAGAgent:
         trigger_keywords = ["calcula", "cuanto es", "\*", "/", "^", "%", "raiz", "potencia", "log", "math"]
         return any(keyword in query.lower() for keyword in trigger_keywords)
 
-    async def process_message(self, query: str):
+    def process_message(self, query: str):
         if self.detect_code_question(query):
             try:
-                result = self.agent.run(query)
-                yield {"response": str(result), "last_step": 1}
+                result = self.agent.invoke(query)
+                print(f"Resultado del código: {result}")
+                yield {"response": str(result["output"]), "last_step": 1}
             except Exception as e:
                 yield {"response": f"Ocurrió un error al ejecutar el código: {str(e)}", "last_step": 1}
         else:
-            response = self.chain.invoke(
-                {"question": query},
-                config={"configurable": {"session_id": "usuario_1"}}
-            )
-            yield {"response": str(response["output"]), "last_step": 1, "source_documents": [doc.metadata.get("source") for doc in response["source_documents"]]}
+            try:
+                full_response = ""
+                for chunk in self.chain.stream(
+                    {"question": query},
+                    config={"configurable": {"session_id": "usuario_1"}}
+                ):
+                    partial = chunk.get("output", "")
+                    full_response += partial
+                    yield {
+                        "response": full_response,
+                        "last_step": 1,
+                    }
+            except Exception as e:
+                yield {"response": f"Ocurrió un error al generar la respuesta: {str(e)}", "last_step": 1}
