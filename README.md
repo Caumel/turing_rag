@@ -4,6 +4,12 @@
 
 Para levantar el servicio del apartado 1, es necesario tener instalado la requierement del fichero ./requierement.txt y luego dirigirse a la carpeta src y ejecutar
 
+Ademas es necesario crear un archivo .env con la clave de open-ai si se quiere ejecutar el codigo
+
+```env
+OPENAI_API_KEY=sk-p...
+```
+
 ```bash
 cd src
 python main.py
