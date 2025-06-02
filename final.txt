@@ -1,0 +1,21 @@
+Pasos necesarios a seguir.
+Descripción de posibles problemas que puedan surgir y medidas para reducir el riesgo.
+Estimación de cantidad de datos necesarios así como de los resultados, métricas, esperadas.
+Enumeración y pequeña descripción (2-3 frases) de técnicas que se pueden utilizar para mejorar el desempeño, las métricas del modelo en tiempo de entrenamiento y las métricas del modelo en tiempo de inferencia.
+
+
+Para el entrenamiento de un modelo, lo primero de todo seria crear un dataset, o encontralos en kaggle o en algun repositorio ya que es lo mas importante,
+si no existiera, necesitarios usar alguna herramiento del estilo labelme para etiquetarla, ya sea por deteccion o clasificacion, una vez tenemos el dataset
+deberemos de crear el modelo para entrenar, creando el dataloader, si es necesario data augmentation. Una vez tenemos el modelo, podria ser necesario 
+tener tanto preprocesado como postprocesado, si tenemos que realizar division de la imagen para detectarla mejor etc. Una vez entrenado, necesitmos evaluar
+el modelo con accuracy, recall, precision etc.
+
+Los problemas, como he dicho antes, data augmentation si no tenemos suficientes imagenes, etiquetar a mano mas datos, si tenemos overfitting, ya que ha aprendido
+demasiado bien las imagenes de entrenamiento etc.
+
+Para la cantidad de datos, normalmente cuantas mas mejor y depende de la dificultar del tipo de objeto, no es lo mismo detectar un avion a un coche que detectar
+una persona y el tipo de animal. Pero unas 1000 imagenes por clase nueva.
+
+Data augmentation, modificar imagenes que ya tenemos en el dataset, para que el modelo tenga mas ejemplos como rotacion, cambio de gama de colores etc
+Tiling, division de la imagen para hacer detecciones sobre trozos de imagen para juntarlas despues en el postprocesado.
+No Max Supression, si dos detecciones se solapan mas de un umbral solo seleccionamos una.
