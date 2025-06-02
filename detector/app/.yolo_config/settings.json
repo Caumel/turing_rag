@@ -1,0 +1,21 @@
+{
+  "settings_version": "0.0.6",
+  "datasets_dir": "/home/caumel/In2AI/turing_rag/detector/app/datasets",
+  "weights_dir": "weights",
+  "runs_dir": "runs",
+  "uuid": "cb0ad26c1d7ee680af34486df0248340dd9af3062f5b782820c1c443a10e9c46",
+  "sync": true,
+  "api_key": "",
+  "openai_api_key": "",
+  "clearml": true,
+  "comet": true,
+  "dvc": true,
+  "hub": true,
+  "mlflow": true,
+  "neptune": true,
+  "raytune": true,
+  "tensorboard": false,
+  "wandb": false,
+  "vscode_msg": true,
+  "openvino_msg": true
+}

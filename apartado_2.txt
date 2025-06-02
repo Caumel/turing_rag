@@ -1,0 +1,35 @@
+Tarea 1: Diferencias entre 'completion' y 'chat' models
+
+Como en el apartado 1, al guardar los mensajes o las conversaciones, se realiza de la format
+{"role": "assistant", "content": "Hola, soy un asistente que te ayudará en tus consultas sobre los PDFs, ¿Cómo te puedo ayudar?"}
+Esto se realiza asi por el tipo de modelo chat, en la que entiende entre el tipo de input si es usuario, servidor o asistente. 
+
+prompt: {"role": "assistant", "content": "Tu tarea es identificar el expediente del usuario"}
+        {"role": "user", "content": "Quiero consutlar el expediente 312345"}
+
+
+En cambio los modelos completion, tienen una estructura de input en forma plana, sin tener este tipo de conversacion.
+
+prompt: "Identifica el numero de expediente del siguiente texto..."
+
+Tarea 2: ¿Cómo forzar a que el chatbot responda 'si' o 'no'?¿Cómo parsear la salida para que siga un formato determinado?
+
+Principalmente la formas que conozco son, indicandolo en el prompt, de la forma, "solo responde con un si o no" tambien podemos mostrarle ejemplos
+mediante few shots para que vea como debe de devolver la respuesta, podemos añadir, reducir la temperatura para que tenga menos inventiva
+
+Para parsear el output del modelo, podemos expresarlo en el prompt, tecnicas como postprocesado para formatear el output o librerias como jsonformer
+
+Tarea 3: Ventajas e inconvenientes de RAG vs fine-tunning
+
+RAG contamos con los documento fisicos, los que puede consultar el modelo en cualquier momento, y si añadimos un modelo nuevo no haria falta reentrenar, 
+al igual que ocurriria con una red siamesa, donde no necesitar reentrenar el modelos con nuevas imagenes, simplemente se añaden. Por otro lado el problema
+es que puede estar limitado a la hora de entener el contexto. 
+
+Fine-tunning, al entrenar el modelo, identifica conexiones entre los documentos, entendiendo mejor el contexto de la conversacion, pero es necesario 
+entrenar el modelo y no vale como con el RAG que se puede añadir documentos nuevo.
+
+Tarea 4: ¿Cómo evaluar el desempaño de un bot de Q&A? ¿Cómo evaluar el desempeño de un RAG?
+
+Para evaluar tanto el bot como con el RAG, se puede hacer evaluación humana, si la respuesta es la esperada. Para el bot, podria medirse la similitud de la 
+respuesta a lo esperado, si es un json, se puede medir numericamente, mientras que con el RAG, seria necesario ver si hace referencia al documento indicado,
+si la respuesta es la esperada, si es correcta a lo esperado o si la información es real, de la información recuperada de los documento.

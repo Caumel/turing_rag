@@ -1,0 +1,7 @@
+pypdf==5.5.0
+langchain==0.3.25
+langchain-community==0.3.24
+langchain-experimental==0.3.4
+faiss-cpu==1.11.0
+pymupdf==1.26.0
+ultralytics==8.3.147
